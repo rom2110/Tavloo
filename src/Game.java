@@ -393,6 +393,7 @@ public class Game implements Serializable{
 
     //skips the turn if called
     public void skipTurn(){
+        select = false;
         diceUsed[0] = true;
         diceUsed[1] = true;
         double_dice = false;
