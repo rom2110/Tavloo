@@ -91,6 +91,16 @@ public class Server implements Runnable{
             
         } catch (Exception e1) {
             e1.printStackTrace();
+            try {
+                socket1.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                socket2.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

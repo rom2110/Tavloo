@@ -39,13 +39,27 @@ public class MyPanel extends JPanel implements KeyListener, MouseListener{
     final int DICE_Y = BOWL_Y + (BOWL_DIAMETER - DICE_SIDE)/2;
     final int DICE_DOT_DIAMETER = DICE_SIDE / 4;
 
+    //board options
+    final String[] options = { "Local Match", "Online Match", "Bot match with Shanteegan, the robot"};
+
     //gameParam holds all the parameters relating to the actual game as well as game logic
     public Game gameParam;
 
-    private boolean player;
+    //false if they are player 1, true if player 2
+    public boolean player;
+
+    //records a change in the game parameters to tell the program to send the other player the new current game
     public boolean change;
 
-    MyPanel(boolean player){
+    //for player 1 when waiting for connection from player 
+    public boolean waiting;
+
+    //Freezes screen waiting for input to start a game
+    //-1: none selected; 0: local game; 1: online game; 2: bot game
+    public int gameMode;
+
+
+    MyPanel(){
         
         this.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
         this.setBackground(new Color(40,62,0));
@@ -54,10 +68,15 @@ public class MyPanel extends JPanel implements KeyListener, MouseListener{
         this.setFocusable(true);
         
         change = false;
-        this.player = player;
+        gameMode = -1;
 
         gameParam = new Game();
 
+    }
+
+    public void setPlayer(boolean player){
+        this.player = player;
+        waiting = !player;
     }
 
     public void paint (Graphics g){
@@ -291,6 +310,30 @@ public class MyPanel extends JPanel implements KeyListener, MouseListener{
                 g2D.drawRect( BOARD_WIDTH - (gameParam.indexSelect - 12) * TRI_WIDTH + BOARD_X - 2 * TRI_WIDTH + BOARD_MIDDLE - disp, BOARD_Y , TRI_WIDTH, TRI_HEIGHT - TRI_VER_SEP/2);
             }
         }
+
+        //if player1, wait for player 2 to start
+        if(waiting){
+            String msg = "Waiting for player 2...";
+            fontSize = 3*WINDOW_WIDTH/(msg.length() * 4); 
+            g2D.setFont(new Font("Calibri", Font.BOLD, fontSize));
+            g2D.drawString(msg, (WINDOW_WIDTH  - msg.length() * fontSize/2)/2, WINDOW_HEIGHT/2);
+        }
+
+        //paint start screen
+        if(gameMode == -1){
+            g2D.setColor(Color.yellow);
+            String welcome = "TAVLOO: SHANTEEGANS RATH";
+            fontSize = WINDOW_HEIGHT / 20; 
+            int smallFontSize = WINDOW_HEIGHT/45;
+            g2D.setFont(new Font("Calibri", Font.BOLD, fontSize));
+            g2D.drawString(welcome, (WINDOW_WIDTH - 2 * fontSize/3  * welcome.length() )/2, (WINDOW_HEIGHT - BOARD_WIDTH) / 4);
+            g2D.setFont(new Font("Calibri", Font.BOLD, smallFontSize));
+            for( int i = 0; i < options.length; i ++){
+                g2D.drawString(options[i], WINDOW_WIDTH/10 + i * WINDOW_WIDTH / 5, WINDOW_HEIGHT - (WINDOW_HEIGHT - BOARD_WIDTH )/4 );
+            }
+        }
+
+
         //paint the winner if the game is over
         if(gameParam.gameOver){
             boolean tavloo = gameParam.player1_out_of_play == 0 || gameParam.player2_out_of_play == 0;
@@ -306,7 +349,7 @@ public class MyPanel extends JPanel implements KeyListener, MouseListener{
         }
     }
 
-    //gets index for player 1
+    //gets index for player 
     // 23 - index to get the location in perspective of other player
     private int getPlayerIndex(int x, int y){
         if( ( (x > 0 && x < (BOARD_WIDTH - BOARD_MIDDLE)/2) || (x > (BOARD_WIDTH + BOARD_MIDDLE)/2  && x < BOARD_WIDTH) ) && //Horizontal Bounds for selecting a peg
@@ -320,18 +363,40 @@ public class MyPanel extends JPanel implements KeyListener, MouseListener{
         return -1;
     }
 
+    //converts mouse input to int selection
+    private int getOptionIndex (int x, int y){
+        //return -1 if bounds not met
+        if( y  > 708 && y < 724) {
+            if(x > 82 && x < 184 ){
+                return 0;
+            }
+            else if(x > 242 && x < 356){
+                return 1;
+            }
+            else if(x > 402 && x < 732){
+                return 2;
+            }
+        }
+        
+        return -1;
+    }
+
     //MOUSE LISTENER
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if(player == gameParam.turn){
+        if(gameMode == -1){
+            gameMode = getOptionIndex(e.getX(), e.getY());
+            System.out.println("gameMode Selcted: " + gameMode);
+        }
+        else if(!waiting && player == gameParam.turn){
             //convert mouse input to location index
             int index = getPlayerIndex(e.getX() - BOARD_X, e.getY() - BOARD_Y);
             //make a move for player
             gameParam.playerClicked(index);
             change = true;
-            repaint();
         }
+        repaint();
     }
 
     
