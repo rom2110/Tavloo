@@ -1,8 +1,3 @@
-
-/*TO DO:
- * - Start Screen
- * - modify code that skips turn if there are no possible moves
- */
 import javax.swing.*;
 
 import java.awt.*;

@@ -1,6 +1,6 @@
 /* TO-DO:
- * - make it so that it pauses the game if it is player 1 and waiting for player 2 to connect
- * - also still need to add the main screen thing
+ * - add the bot gamemode option
+ * - create the bot using minimax tree search methods
  */
 
 import java.io.*;
