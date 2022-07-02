@@ -365,7 +365,6 @@ public class Game implements Serializable{
         }
         //check if game is over
         if(player1_out_of_play == 15 || player2_out_of_play == 15){
-            System.out.println("hello???");
             diceUsed[0] = false;
             diceUsed[1] = false;
             gameOver = true;

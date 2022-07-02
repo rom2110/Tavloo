@@ -1,6 +1,4 @@
-/* TO-DO:
- * - make it so that it pauses the game if it is player 1
- */
+
 
 import java.io.*;
 import java.net.*;
@@ -20,12 +18,8 @@ public class MyClientFrame extends JFrame{
         ObjectOutputStream objOut = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream objIn = new ObjectInputStream(socket.getInputStream());
 
-
-        //create panel with what player they are
-        boolean player = (boolean) objIn.readObject();
-        MyPanel panel = new MyPanel(player);
-        //Setting up basic frame 
-
+        //Setting up basic frame and panel
+        MyPanel panel = new MyPanel(true);
         this.setTitle("Tavloo Client: Shanteegan's Rath");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.add(panel);
@@ -37,27 +31,17 @@ public class MyClientFrame extends JFrame{
         //recieve initial game
         panel.gameParam.recieveGameData(objIn);
         System.out.println("Recieved GameData");
-
-        //if player1, wait for the boolean to start
-        if(!player){
-            System.out.println( (String) objIn.readObject());
-        }
-
-        
-
         while(!socket.isClosed()){
-            if( (!panel.gameParam.turn == player && !panel.gameParam.almostnextturn) ){
+            if( (panel.change && panel.gameParam.turn) || panel.gameParam.almostnextturn){
+                panel.gameParam.almostnextturn = false;
+                panel.change = false;
+                panel.gameParam.sendGameData(objOut);
+                System.out.println("Sent GameData");
+            }
+            else if(!panel.gameParam.turn){
                 panel.gameParam.recieveGameData(objIn);
                 panel.repaint();
                 System.out.println("Recieved GameData");
-            }
-            else if( (panel.change && panel.gameParam.turn == player) || (panel.gameParam.almostnextturn && (!panel.gameParam.turn == player) ) ){
-                //reset alost next turn and change
-                panel.gameParam.almostnextturn = false;
-                panel.change = false;
-                //send gameParam data
-                panel.gameParam.sendGameData(objOut);
-                System.out.println("Sent GameData");
             }
         }
 
