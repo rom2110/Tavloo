@@ -66,6 +66,34 @@ public class Game implements Serializable{
 
         almostnextturn = false;
     }
+
+    //clones current instance of the game
+    public Game clone(){
+        //create knew Game;
+        Game cloneGame = new Game();
+        //copy game over boolean
+        cloneGame.gameOver = gameOver;
+        //copy player data
+        for(int i = 0; i < player1.length; i++){
+            cloneGame.player1[i] = player1[i];
+            cloneGame.player1[i] = player1[i];
+        }
+        cloneGame.player1_out_of_play = player1_out_of_play;
+        cloneGame.player1_knocked = player1_knocked;
+        cloneGame.player2_out_of_play = player2_out_of_play;
+        cloneGame.player2_knocked = player2_knocked;
+        
+        cloneGame.turn = turn;
+        for(int i = 0; i < 2; i ++ ){
+            cloneGame.dice[i] = dice[i];
+            cloneGame.diceUsed[i] = diceUsed[i];
+        }
+        cloneGame.double_dice = double_dice;
+        cloneGame.rand = rand;
+        
+        return cloneGame;
+    }
+
     public void sendGameData(ObjectOutputStream objOut) throws Exception{
         objOut.writeObject(gameOver);
 

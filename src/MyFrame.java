@@ -1,6 +1,9 @@
 /* TO-DO:
  * - add the bot gamemode option
  * - create the bot using minimax tree search methods
+ * - add code that brings the user back to the mainmenue if the other player randomly disconnects
+ * - add feature that makes player have to click dice to roll for their turn
+ * - 
  */
 
 import java.io.*;
