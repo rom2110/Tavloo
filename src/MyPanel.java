@@ -417,21 +417,19 @@ public class MyPanel extends JPanel implements KeyListener, MouseListener{
     }
     @Override
     public void keyPressed(KeyEvent e) {
-        switch(e.getKeyCode()){
-            //press to exit out of game
-            case KeyEvent.VK_ESCAPE: System.exit(0);
-            //press to skip turn
-            case KeyEvent.VK_S:{
-                if(player == gameParam.turn){
-                    gameParam.skipTurn();
-                    
-                }
-            }
-            //press to leave game mode
-            case KeyEvent.VK_L:{
-                gameMode = -1;
-                gameParam = new Game();
-            }
+        int keyCode = e.getKeyCode();
+        //exit out of game
+        if(keyCode == KeyEvent.VK_ESCAPE){
+            System.exit(0);
+        }
+        //skip your turn
+        else if(keyCode == KeyEvent.VK_S && player == gameParam.turn){
+            gameParam.skipTurn();
+        }
+        //go back to select different game mode
+        else if(keyCode == KeyEvent.VK_L){
+            gameMode = -1;
+            gameParam = new Game();
         }
         repaint();
     }
