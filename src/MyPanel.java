@@ -337,7 +337,8 @@ public class MyPanel extends JPanel implements KeyListener, MouseListener{
             if(tavloo){
                 msg = "TAVLOO!!! " + msg;
             }
-            fontSize = 3*WINDOW_WIDTH/(msg.length() * 4); 
+            fontSize = 3*WINDOW_WIDTH/(msg.length() * 4);
+            g2D.setColor(Color.gray); 
             g2D.setFont(new Font("Calbiri", Font.BOLD, fontSize));
             g2D.drawString(msg, (WINDOW_WIDTH  - msg.length() * fontSize/2)/2, WINDOW_HEIGHT/2);
             
