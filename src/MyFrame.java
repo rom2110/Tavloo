@@ -42,7 +42,30 @@ public class MyFrame extends JFrame{
                 panel.player = panel.gameParam.turn;
             }
         }
-
+        //if they chose to play the bot
+        else if(panel.gameMode == 2){
+            Bot bot = new Bot();
+            //set the client as player 1
+            panel.setPlayer(false);
+            //skip waiting
+            panel.waiting = false;
+            panel.repaint();
+            System.out.println("MATCH WITH SHANTEEGAN CHOSEN");
+            while(true){
+                System.out.print("");
+                //if bots turn
+                if(panel.gameParam.turn){
+                    System.out.println("BOTS TURN");
+                    System.out.println(panel.gameParam.dice[0]);
+                    System.out.println(panel.gameParam.dice[1]);
+                    
+                    //have the bot figure out the best move
+                    panel.gameParam = bot.bestMove(panel.gameParam);
+                    panel.repaint();
+                }
+                //else just let the panel handel it
+            }
+        }
         System.out.println("ONLINE GAME SELECTED");
 
         

@@ -76,10 +76,11 @@ public class Game implements Serializable{
         //copy player data
         for(int i = 0; i < player1.length; i++){
             cloneGame.player1[i] = player1[i];
-            cloneGame.player1[i] = player1[i];
+            cloneGame.player2[i] = player2[i];
         }
         cloneGame.player1_out_of_play = player1_out_of_play;
         cloneGame.player1_knocked = player1_knocked;
+
         cloneGame.player2_out_of_play = player2_out_of_play;
         cloneGame.player2_knocked = player2_knocked;
         
@@ -400,7 +401,7 @@ public class Game implements Serializable{
     }
 
     //when in endgame, verifies that the peg selected is the peg farthest from the end
-    private boolean farthestPeg(int index, int[] player){
+    public boolean farthestPeg(int index, int[] player){
         for(int i = index + 1; i < 6; i ++){
             if(player[i] > 0){
                 return false;
@@ -410,7 +411,7 @@ public class Game implements Serializable{
     }
 
     //checks if the current player is in the end game or not
-    private boolean endGame(int[] player) {
+    public boolean endGame(int[] player) {
         for(int i = 6; i < 24; i ++){
             if(player[i] > 0){
                 return false;
