@@ -321,7 +321,7 @@ public class MyPanel extends JPanel implements KeyListener, MouseListener{
             fontSize = WINDOW_HEIGHT / 20; 
             int smallFontSize = WINDOW_HEIGHT/45;
             g2D.setFont(new Font("Calibri", Font.BOLD, fontSize));
-            g2D.drawString(welcome, (WINDOW_WIDTH - 2 * fontSize/3  * welcome.length() )/2, (WINDOW_HEIGHT - BOARD_WIDTH) / 4);
+            g2D.drawString(welcome, (WINDOW_WIDTH - 1 * fontSize/2  * welcome.length() )/2, (WINDOW_HEIGHT - BOARD_WIDTH) / 4);
             g2D.setFont(new Font("Calibri", Font.BOLD, smallFontSize));
             for( int i = 0; i < options.length; i ++){
                 g2D.drawString(options[i], WINDOW_WIDTH/10 + i * WINDOW_WIDTH / 5, WINDOW_HEIGHT - (WINDOW_HEIGHT - BOARD_WIDTH )/4 );
@@ -418,15 +418,22 @@ public class MyPanel extends JPanel implements KeyListener, MouseListener{
     @Override
     public void keyPressed(KeyEvent e) {
         switch(e.getKeyCode()){
+            //press to exit out of game
             case KeyEvent.VK_ESCAPE: System.exit(0);
+            //press to skip turn
             case KeyEvent.VK_S:{
                 if(player == gameParam.turn){
                     gameParam.skipTurn();
-                    repaint();
+                    
                 }
             }
-            
+            //press to leave game mode
+            case KeyEvent.VK_L:{
+                gameMode = -1;
+                gameParam = new Game();
+            }
         }
+        repaint();
     }
 
     @Override
