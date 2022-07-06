@@ -10,8 +10,8 @@ import java.net.*;
 import javax.swing.*;
 
 public class MyFrame extends JFrame{
-    final String SERVER_IP = "localhost";
-    final int SERVER_PORT = 25565;
+    final String SERVER_IP = "server.onnik.com";
+    final int SERVER_PORT = 12300;
 
     MyFrame() throws Exception{
         

@@ -5,7 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server implements Runnable{
-    static final int PORT = 25565;
+    static final int PORT = 12300;
     
     private Socket socket1;
 
