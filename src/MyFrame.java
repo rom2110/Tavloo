@@ -36,7 +36,7 @@ public class MyFrame extends JFrame{
             //if they chose to play locally
             if(panel.gameMode == 0){
                 System.out.println("LOCAL GAME SELECTED");
-                while(true){
+                while(panel.gameMode == 0){
                     System.out.println(panel.player);
                     panel.player = panel.gameParam.turn;
                 }
@@ -90,38 +90,56 @@ public class MyFrame extends JFrame{
                     System.out.println("Recieved GameData");
                     //repaint newly added parameters
                     panel.repaint();
+
                     //if player1, wait for the boolean to start
                     if(!panel.player){
-                        System.out.println( (String) objIn.readObject());
+                        //open a thread to see if the gameMode changes while listening
+                        Listener listener = new Listener(objIn, panel);
+                        Thread listThread = new Thread(listener);
+                        listThread.start();
+
+                        try{
+                            System.out.println( (String) objIn.readObject());
+                        } catch(Exception e){
+                            System.out.println("Client left game");
+                            socket.close();
+                        }
+
+                        //stop listener for if client wants to leave and stop waiting
+                        listener.stop = true;
                         panel.waiting = false;
                         panel.repaint();
                     }
     
-                    while(!socket.isClosed()){
+                    while(panel.gameMode == 1){
+                        //opponent turn
                         if( (!panel.gameParam.turn == panel.player && !panel.gameParam.almostnextturn) ){
+                            System.out.println("Recieving GameData");
                             panel.gameParam.recieveGameData(objIn);
                             panel.repaint();
-                            System.out.println("Recieved GameData");
                         }
+                        //your turn
                         else if( (panel.change && panel.gameParam.turn == panel.player) || (panel.gameParam.almostnextturn && (!panel.gameParam.turn == panel.player) ) ){
+                            System.out.println("Sending GameData");
+                            
                             //reset alost next turn and change
                             panel.gameParam.almostnextturn = false;
                             panel.change = false;
                             //send gameParam data
                             panel.gameParam.sendGameData(objOut);
-                            System.out.println("Sent GameData");
+                        }
+                        else{
+                            System.out.print("");
                         }
                     }
                     //cleanup
                     socket.close();
                 }
             }catch(Exception e){
-                System.out.println("Server not available..., sent back to menue");
+                System.out.println("Connection closed \nSent back to Game Mode select");
                 panel.gameMode = -1;
                 panel.repaint();
             }
-            
         }
-        
     }   
 }

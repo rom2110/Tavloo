@@ -40,9 +40,11 @@ public class Server implements Runnable{
             game.sendGameData(objOut1);
             System.out.println("Player 1 Connected");
 
+            Socket socket2 = new Socket();
             try{
                 //wait for player 2 to connect
-                Socket socket2 = serverSocket.accept();
+                socket2.close();
+                socket2 = serverSocket.accept();
 
                 //Create object streams
                 ObjectOutputStream objOut2 = new ObjectOutputStream(socket2.getOutputStream());
@@ -64,6 +66,7 @@ public class Server implements Runnable{
                 
             } catch(Exception e){
                 System.out.println("Error Occured with connecting to socket, waiting for player 1 again...");
+                socket2.close();
             }
         }
     }
@@ -103,16 +106,14 @@ public class Server implements Runnable{
             socket2.close();
             
         } catch (Exception e1) {
-            e1.printStackTrace();
+            System.out.println("Someone disconnected... \nStopping thread...");
             try {
                 socket1.close();
             } catch (IOException e) {
-                e.printStackTrace();
             }
             try {
                 socket2.close();
             } catch (IOException e) {
-                e.printStackTrace();
             }
         }
     }

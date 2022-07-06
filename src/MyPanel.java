@@ -424,13 +424,14 @@ public class MyPanel extends JPanel implements KeyListener, MouseListener{
             System.exit(0);
         }
         //skip your turn
-        else if(keyCode == KeyEvent.VK_S && player == gameParam.turn){
+        else if(keyCode == KeyEvent.VK_S && player == gameParam.turn && waiting == false){
             gameParam.skipTurn();
         }
         //go back to select different game mode
         else if(keyCode == KeyEvent.VK_L){
             gameMode = -1;
             gameParam = new Game();
+            waiting = false;
         }
         repaint();
     }
