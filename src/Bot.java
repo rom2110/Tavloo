@@ -1,10 +1,23 @@
+/*TO-DO:
+ * - Modify eval to:
+ *      - Favor moving pieces farther out than closer int
+ *          - Use value of farthest peg to do this
+ *      - Knock enemy pieces closer to their endzone
+ *      - Use some linear modifier to do thiss
+ */
+
+
 import java.util.ArrayList;
 
 public class Bot {
     final int ENEMY_KNOCKED_MOD = 10;
-    final int BOT_KNOCKED_MOD = -1;
     final int OPEN_PEGS = -5;
     final int OUT_OF_PLAY = 4;
+    final int FARTHEST_PEG = -1;
+    //Bot knocked not implemented yet
+    final int BOT_KNOCKED_MOD = -1;
+    
+    //for mini max alg:
     final int DEPTH_LIMIT = 4;
 
     private void printArray(int[] player2, String message){
@@ -93,13 +106,18 @@ public class Bot {
 
         //check for open pegs
         int openPegs = 0;
-        for(int i = 0; i < game.player2.length; i ++){
+        //get the number of open pegs in front of the enemy
+        for(int i = 23 - farthestPeg(game.player1); i < game.player2.length; i ++){
             if(game.player2[i] == 1){
                 openPegs += 1;
             }
         }
         //add all the values and give a score
-        return OPEN_PEGS * openPegs + BOT_KNOCKED_MOD * game.player2_knocked + ENEMY_KNOCKED_MOD * game.player1_knocked + OUT_OF_PLAY * game.player2_out_of_play;
+        return OPEN_PEGS * openPegs //open pegs mod
+                + BOT_KNOCKED_MOD * game.player2_knocked //knocked mod
+                + ENEMY_KNOCKED_MOD * game.player1_knocked //enemy knocked mod
+                + OUT_OF_PLAY * game.player2_out_of_play //out of play mod
+                + FARTHEST_PEG * farthestPeg(game.player2); //farthest peg mod
     }
 
     private ArrayList<Game> possibleMoves(int dice, Game game){
@@ -135,7 +153,7 @@ public class Bot {
                     possGame.player2_out_of_play += 1;
                     possMoves.add(possGame);
                 }
-                else if(farthPeg < dice-1){
+                else if(farthPeg > -1 && farthPeg < dice-1){
                     Game possGame = game.clone();
                     possGame.player2[farthPeg] -= 1;
                     possGame.player2_out_of_play += 1;
@@ -164,61 +182,14 @@ public class Bot {
         return possMoves;
     }
 
-    //returns index of farthest peg containing a piece in end zone
+    //returns index of farthest peg containing a piece
     private int farthestPeg(int[] player) {
         int curPeg = -1;
-        for(int i = 0; i < 6; i ++){
+        for(int i = 0; i < 24; i ++){
             if(player[i] > 0){
                 curPeg = i;
             }
         }
         return curPeg;
-    }
-
-
-    private ArrayList<Game> oldPossibleMoves(Game game){
-        
-        ArrayList<Game> possMoves = new ArrayList<Game>();
-
-        
-        //only select indecies in range of the possible moves
-        for(int i = game.dice[0] ; i < game.player2.length; i ++){
-
-            int possIndex1 = i - game.dice[0];
-            //if the peg has pieces and the first dice move from this peg is empty
-            if(game.player2[i] > 0 && game.player1[23 - possIndex1] < 2){
-                
-                //only select indecies in range of the possible moves
-                for(int j = game.dice[1]; j < game.player2.length ; j ++){
-                    int possIndex2 = j - game.dice[1];
-                    //if the peg has a piece or for the case where its the same peg it has more than 1 piece
-                    if(game.player1[23 - possIndex2 ] < 2 && (game.player2[j] > 0 && i != j || game.player2[j] > 1 && i == j) ){
-                        //create a copy of the game
-                        Game possGame = game.clone();
-
-                        //move pieces
-                        possGame.player2[possIndex1] += 1;
-                        possGame.player2[possIndex2] += 1;
-
-                        possGame.player2[i] -= 1;
-                        possGame.player2[j] -= 1;
-
-                        //check if the indexees selected have an enemy piece on them
-                        if(possGame.player1[23 - (possIndex1) ] == 1 ){
-                            possGame.player1[23- possIndex1] = 0;
-                            possGame.player1_knocked += 1;
-                        }
-                        if(possGame.player1[23 - (possIndex2) ] == 1 ){
-                            possGame.player1[23- possIndex2] = 0;
-                            possGame.player1_knocked += 1;
-                        }
-                        
-                        //add game to array
-                        possMoves.add(possGame);
-                    }
-                }
-            }
-        }
-        return possMoves;
     }
 }

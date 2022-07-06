@@ -5,7 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server implements Runnable{
-    static final int PORT = 12300;
+    static final int PORT = 25565;
     
     private Socket socket1;
 
@@ -40,27 +40,31 @@ public class Server implements Runnable{
             game.sendGameData(objOut1);
             System.out.println("Player 1 Connected");
 
-            //wait for player 2 to connect
-            Socket socket2 = serverSocket.accept();
+            try{
+                //wait for player 2 to connect
+                Socket socket2 = serverSocket.accept();
 
-            //Create object streams
-            ObjectOutputStream objOut2 = new ObjectOutputStream(socket2.getOutputStream());
+                //Create object streams
+                ObjectOutputStream objOut2 = new ObjectOutputStream(socket2.getOutputStream());
 
-            //send the current game and let them know they are player 2
-            objOut2.writeObject(true);
-            game.sendGameData(objOut2);
-            System.out.println("Player 2 Connected");
+                //send the current game and let them know they are player 2
+                objOut2.writeObject(true);
+                game.sendGameData(objOut2);
+                System.out.println("Player 2 Connected");
 
-            //let player 1 know someone connected
-            objOut1.writeObject("SERVER: Player 2 Connected");
+                //let player 1 know someone connected
+                objOut1.writeObject("SERVER: Player 2 Connected");
 
-            //Set up thread
-            Server server = new Server(socket1, socket2, objOut1, objOut2, game);
-            Thread thread = new Thread(server);
+                //Set up thread
+                Server server = new Server(socket1, socket2, objOut1, objOut2, game);
+                Thread thread = new Thread(server);
 
-            //start thread
-            thread.start();
-            System.out.println("Hi, im dory");
+                //start thread
+                thread.start();
+                
+            } catch(Exception e){
+                System.out.println("Error Occured with connecting to socket, waiting for player 1 again...");
+            }
         }
     }
     @Override
@@ -74,16 +78,25 @@ public class Server implements Runnable{
                 //player 2's turn
                 if(game.turn){
                     System.out.println("Sending data to player 1");
+                    try{
+                        game.recieveGameData(objIn2);
+                        game.sendGameData(objOut1);
+                    } catch(Exception e){
+                        System.out.println("Failed sending data to player 1... \nStopping thread...");
+                        break;
+                    }
                     
-                    game.recieveGameData(objIn2);
-                    game.sendGameData(objOut1);
                 }
                 //player 1's turn
                 else{
                     System.out.println("Sending data to player 2");
-                    
-                    game.recieveGameData(objIn1);
-                    game.sendGameData(objOut2);
+                    try{
+                        game.recieveGameData(objIn1);
+                        game.sendGameData(objOut2);
+                    } catch(Exception e){
+                        System.out.println("Failed sending data to player 2... \nStopping thread...");
+                        break;
+                    }
                 }
             }
             socket1.close();
