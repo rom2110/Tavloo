@@ -99,6 +99,9 @@ public class Bot {
         printArray(diff, "Difference: ");
 
         bestMove.skipTurn();
+        if(bestMove.player2_out_of_play == 15){
+            bestMove.gameOver = true;
+        }
         return bestMove;
     }
 
