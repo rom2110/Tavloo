@@ -1,8 +1,8 @@
 make:
-	javac -cp /src src/*.java -d bin 
-	javadoc src/*.java -d docs
-	jar -cvfm TavlooServer.jar manifestServer.mf -C bin/ . src/
-	jar -cvfm TavlooClient.jar manifestClient.mf -C bin/ . src/
+	javac -cp src/main/java src/main/java/com/tavloo/*.java -d bin 
+	javadoc src/main/java/com/tavloo/*.java -d docs
+	jar -cfe TavlooServer.jar com.tavloo.Server -C bin/ .
+	jar -cfe TavlooClient.jar com.tavloo.Client -C bin/ .
 
 server: make
 	java -jar TavlooServer.jar
